@@ -4,7 +4,7 @@ const invoiceTableGlobal = document.getElementById("ctl00_Contentplaceholder1_ct
 const invoiceTable = invoiceTableGlobal.children[0]; //Lista de elementos
 const tableLen = invoiceTable.children.length; //Longitud Tabla
 
-function downloadFile(){
+function downloadFileButton(){
     const blob = new Blob([...invoiceList], {type:"octet-stream"});
     const href = URL.createObjectURL(blob);
     const boton = Object.assign(document.createElement("a"), {href, download:"invoiceList.txt"});
@@ -45,6 +45,22 @@ function verifyDuplicity(semiresult){
     } else { invoiceList.push(result); }
 }
 
+function verifyName(name, amount, date){
+    if (name[0] == " " || name[1] == " "){
+        name = "Sin nombre";
+    }
+
+    if (amount[0] == " " || amount[1] == " "){
+        amount = "Sin cantidad";
+    }
+
+    if (date[0] == " " || date[1] == " "){
+        date = "Sin dia";
+    }
+
+    return (name + " " + amount + " (" +  date + ")").replace(/\//g, '-');
+}
+
 if (invoiceTableGlobal != undefined){
 
     if (document.URL.indexOf("CuentasPropias.aspx") >= 0){
@@ -54,24 +70,26 @@ if (invoiceTableGlobal != undefined){
             
             const name = invoice.children[14].textContent; //Nombre del archivo - CUENTAS PROPIAS
             const amount = invoice.children[10].textContent; //Importe a Transferir - CUENTAS PROPIAS
-            const date = (invoice.children[12].textContent).replace(/\./g, ''); //Fecha de la factura - CUENTAS PROPIAS
-            const semiresult = (name + " " + amount + " (" +  date + ")").replace(/\//g, '-'); //Nombre final del PDF
-            
+            const date = invoice.children[12].textContent.replace(/\./g, ''); //Fecha de la factura - CUENTAS PROPIAS
+
+            let semiresult = verifyName(name, amount, date); //Pasa por la funcion verifyName para verificar que el nombre cumpla con los criterios completos
+
             verifyDuplicity(semiresult);
-        } downloadFile();
+        } downloadFileButton();
     }
     
     if (document.URL.indexOf("SPEI.aspx") >= 0 || document.URL.indexOf("CuentasTercero.aspx") >= 0){
         for (let i = 1; i < tableLen; i++){
 
-            let invoice = invoiceTable.children[i]; 
-    
+            let invoice = invoiceTable.children[i];
+
             const name = invoice.children[8].textContent; //Nombre del archivo - Terceros Banorte / Ixe
             const amount = invoice.children[12].textContent; //Importe a Transferir - Terceros Banorte / Ixe
-            const date = (invoice.children[14].textContent).replace(/\./g, ''); //Fecha de la factura - Terceros Banorte / Ixe
-            const semiresult = (name + " " + amount + " (" +  date + ")").replace(/\//g, '-'); //Nombre final del PDF
-    
+            const date = invoice.children[14].replace(/\./g, ''); //Fecha de la factura - Terceros Banorte / Ixe
+
+            const semiresult = verifyName(name, amount, date); //Pasa por la funcion verifyName para verificar que el nombre cumpla con los criterios completos
+
             verifyDuplicity(semiresult);
-        } downloadFile();
+        } downloadFileButton();
     }
 }

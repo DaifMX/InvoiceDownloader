@@ -85,7 +85,7 @@ if (invoiceTableGlobal != undefined){
 
             const name = invoice.children[8].textContent; //Nombre del archivo - Terceros Banorte / Ixe
             const amount = invoice.children[12].textContent; //Importe a Transferir - Terceros Banorte / Ixe
-            const date = invoice.children[14].replace(/\./g, ''); //Fecha de la factura - Terceros Banorte / Ixe
+            const date = invoice.children[14].textContent.replace(/\./g, ''); //Fecha de la factura - Terceros Banorte / Ixe
 
             const semiresult = verifyName(name, amount, date); //Pasa por la funcion verifyName para verificar que el nombre cumpla con los criterios completos
 
